@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+
+# Lean / Lake (mathlib cache is huge; pin toolchain + lake-manifest instead)
+.lake/
+lake-packages/
+
+# Data that must never be published
+**/*.jpeg
+**/*.jpg
+chest_xray/**/*.jpeg
+chest_xray/**/*.jpg
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# LaTeX (this repo must not grow a manuscript)
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+main.tex
+paper.pdf

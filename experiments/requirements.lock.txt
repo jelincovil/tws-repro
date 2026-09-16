@@ -1,0 +1,60 @@
+# requirements.lock.txt
+#
+# Full transitive `pip freeze` of a CLEAN virtual environment created from
+# requirements.txt. Regenerated 2026-08-15; the previous contents were a set of
+# prose notes from 2026-07-30 that still described a "Python 3.9+ compatible"
+# install, which contradicted both requirements.txt and
+# pyproject.toml (`requires-python = ">=3.11"`).
+#
+# Reference environment
+#   OS         Windows 11
+#   Python     3.14.3
+#   pip        25.3 (the version bundled with the 3.14.3 venv)
+#
+# How this file was produced (reproduce it the same way after changing pins):
+#   python -m venv .venv
+#   .venv/Scripts/python -m pip install -r requirements.txt
+#   .venv/Scripts/python -m pip freeze | sort > requirements.lock.txt
+#
+# Independently re-verified 2026-08-16 in a second from-scratch venv on a short
+# path (C:\twsvenv2, Python 3.14.3, pip 25.3): `pip install -r requirements.txt`
+# exited 0 and `pip freeze | sort` reproduced the 24 lines below EXACTLY, with
+# no diff. Upgrading pip first is therefore not load-bearing and the earlier
+# `pip install -U pip` step has been dropped; the header previously claimed
+# "pip 26.x", which was never the version that produced this file.
+#
+# Install for normal use with requirements.txt, not with this file: the ranges
+# there are the supported contract, this is a snapshot of one resolution of it.
+#
+# The dev tools (pytest, pytest-cov, PyYAML and their transitive deps) are
+# deliberately NOT frozen here: this is the lock of requirements.txt alone.
+#
+# Note: scipy appears below but is NOT a direct dependency. Nothing under src/
+# imports it; it is pulled in by persim / scikit-learn. (One file outside src/,
+# paper/figures/fig4_projection_scales.py, does import scipy.ndimage -- see the
+# scope caveat at the end of requirements.txt.)
+
+Deprecated==1.3.1
+PyWavelets==1.9.0
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.63.0
+gudhi==3.13.0
+hopcroftkarp==1.2.5
+joblib==1.5.3
+kiwisolver==1.5.0
+matplotlib==3.11.1
+narwhals==2.24.0
+numpy==2.5.2
+packaging==26.3
+pandas==3.0.5
+persim==0.3.8
+pillow==12.3.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+scikit-learn==1.9.0
+scipy==1.18.0
+six==1.17.0
+threadpoolctl==3.6.0
+tzdata==2026.3
+wrapt==2.3.0

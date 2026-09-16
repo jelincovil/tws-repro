@@ -1,0 +1,55 @@
+# Authors and ORCIDs copied from the manuscript (not invented).
+# GitHub URL and Zenodo DOI omitted until a public remote exists.
+# arXiv:XXXX.XXXXX is an explicit placeholder — replace when the note is posted.
+cff-version: 1.2.0
+message: "Cite the companion note (arXiv placeholder below), not this repository as the paper."
+type: software
+title: "Companion code for explicit L-infinity stability bounds of undecimated Daubechies smoothers"
+abstract: >
+  Numerical and Lean 4 artefacts that reproduce the claims of the companion
+  short note (arXiv:XXXX.XXXXX, placeholder). This repository does not
+  contain the LaTeX manuscript.
+authors:
+  - family-names: "Lincovil Curivil"
+    given-names: "Jaime Enrique"
+    affiliation: "Universidad Nacional de Ingeniería, Lima, Perú"
+    orcid: "https://orcid.org/0000-0003-4633-4033"
+    email: "jlincovilc@uni.edu.pe"
+  - family-names: "Reinoso Reinoso"
+    given-names: "César Daniel"
+    affiliation: "Escuela Superior Politécnica de Chimborazo (ESPOCH), Riobamba, Ecuador"
+    orcid: "https://orcid.org/0000-0002-1233-517X"
+    email: "cesard.reinoso@espoch.edu.ec"
+  - family-names: "Pacheco-Barrios"
+    given-names: "Niels"
+    affiliation: "Universidad Científica del Sur, Lima, Perú; Harvard Medical School, Boston, MA, USA"
+    orcid: "https://orcid.org/0000-0001-5586-8251"
+    email: "npacheco@cientifica.edu.pe"
+keywords:
+  - persistence landscapes
+  - stability bounds
+  - wavelet frames
+  - undecimated wavelet transform
+  - Lean 4
+license: MIT
+version: 1.0.0
+date-released: 2026-09-16
+preferred-citation:
+  type: article
+  title: "Explicit L-infinity stability bounds for undecimated Daubechies smoothing and wavelet-filtered persistence landscapes"
+  authors:
+    - family-names: "Lincovil Curivil"
+      given-names: "Jaime Enrique"
+      orcid: "https://orcid.org/0000-0003-4633-4033"
+    - family-names: "Reinoso Reinoso"
+      given-names: "César Daniel"
+      orcid: "https://orcid.org/0000-0002-1233-517X"
+    - family-names: "Pacheco-Barrios"
+      given-names: "Niels"
+      orcid: "https://orcid.org/0000-0001-5586-8251"
+  year: 2026
+  journal: "arXiv preprint"
+  identifiers:
+    - type: other
+      value: "arXiv:XXXX.XXXXX"
+      description: "Placeholder. Replace with the real arXiv identifier when the note is posted."

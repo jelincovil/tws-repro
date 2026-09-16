@@ -1,0 +1,32 @@
+{
+  "seed": 20260715,
+  "n_per_class": 20,
+  "source": "chest_xray/test/{NORMAL,PNEUMONIA}",
+  "selection": "np.random.Generator(SEED).choice, no replacement, then sorted names",
+  "resize": "256x256 cv2.INTER_AREA",
+  "grayscale": true,
+  "normalize": "[0,1]",
+  "invert": "Z <- 1-Z before A1",
+  "operator": "periodized convolution, Prop. 3.4 kernel A_1, mode=wrap",
+  "pywt": false,
+  "U": [
+    0.4,
+    0.8
+  ],
+  "landscape_grid": 200,
+  "integration": "np.trapezoid",
+  "lhs": "pointwise L2(U) of first-landscape difference (not reverse-triangle of norms)",
+  "homology": "H0 only, GUDHI CubicalComplex top-dimensional cells, finite bars",
+  "epsilons": [
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.05
+  ],
+  "noise": "Uniform(-eps,eps), clip to [0,1], RHS uses measured ||Delta||_inf",
+  "cfp": 1.2656249999999991,
+  "boundary": "wrap/periodization",
+  "complex": "gudhi.CubicalComplex(top_dimensional_cells=...)",
+  "n_points": 200
+}

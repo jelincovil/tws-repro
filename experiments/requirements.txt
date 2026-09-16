@@ -1,0 +1,38 @@
+# Direct dependencies for the empirical modules (A / B / D).
+#
+# Target interpreter: Python 3.11-3.14 (verified on 3.14.3).
+#
+# Floors are derived from the CODE, not from habit:
+#   numpy >= 2.0   -- persistence_bounds.py uses np.trapezoid, which was added
+#                     in NumPy 2.0. np.trapz was removed in NumPy 2.x, so the
+#                     module is NOT runnable on numpy < 2.0.
+#   gudhi >= 3.12  -- 3.12.0 and 3.13.0 are the only releases with wheels for
+#                     CPython 3.13/3.14. Earlier pins are uninstallable there.
+#   PyWavelets >= 1.4 -- swt2(..., trim_approx=, norm=) keyword arguments.
+#   pandas >= 2.0  -- DataFrame.groupby/describe usage in the modules.
+#
+# Verified clean install: see experiments/requirements.lock.txt for the exact
+# resolved versions of the reference environment.
+
+numpy>=2.0,<3
+matplotlib>=3.7,<4
+PyWavelets>=1.4,<2
+gudhi>=3.12,<3.14
+persim>=0.3.5,<0.4
+pandas>=2.0,<4
+
+# scipy is deliberately NOT listed: nothing under experiments/src/ imports it,
+# and this file covers exactly those modules. It still gets installed, as a
+# transitive dependency of persim/scikit-learn, but it is not a direct
+# dependency of the empirical modules and listing it would contradict the rule
+# above.
+#
+# Scope caveat, so this is not mis-read as a repo-wide statement: ONE file
+# outside experiments/src/ does import scipy --
+#   paper/figures/fig4_projection_scales.py:22
+#     from scipy.ndimage import gaussian_filter1d
+# That script is a manuscript-figure generator, not part of module A/B/D, and
+# it has no requirements file of its own; today it works only because the
+# persim -> scikit-learn -> scipy edge happens to install scipy anyway. If that
+# edge ever disappears, fig4 breaks and scipy must be declared wherever the
+# paper figures get their dependencies from -- not here.

@@ -1,0 +1,25 @@
+# Lake build configuration for the TWS persistence-stability formalization.
+#
+# Toolchain and mathlib are pinned together for reproducibility:
+#   lean-toolchain : leanprover/lean4:v4.33.0
+#   mathlib4       : tag v4.33.0 = db584cd6d46c92f209a44c0f1c829460d327499d
+# (mathlib's own `lean-toolchain` at that tag is exactly leanprover/lean4:v4.33.0)
+#
+# Build:  lake exe cache get && lake build
+
+name = "tws"
+version = "0.1.0"
+defaultTargets = ["TWS"]
+
+# mathlib-style: no auto-implicits hiding missing binders.
+[leanOptions]
+autoImplicit = false
+relaxedAutoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "db584cd6d46c92f209a44c0f1c829460d327499d"
+
+[[lean_lib]]
+name = "TWS"

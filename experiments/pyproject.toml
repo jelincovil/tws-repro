@@ -1,0 +1,106 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tws-validation"
+version = "1.0.0"
+description = "Empirical validation for parameter-localized persistence landscape stability"
+readme = "README.md"
+authors = [
+    {name = "Author 1", email = "author1@institution.edu"},
+    {name = "Author 2", email = "author2@institution.edu"},
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+# Floors mirror experiments/requirements.txt and are derived from the code:
+#   numpy >= 2.0  -> persistence_bounds.py uses np.trapezoid (NumPy 2.0+);
+#                    np.trapz no longer exists in NumPy 2.x.
+#   gudhi >= 3.12 -> only 3.12.0 / 3.13.0 ship wheels for CPython 3.13/3.14.
+#   pandas, persim were previously missing here although the modules import them.
+requires-python = ">=3.11"
+dependencies = [
+    # scipy is intentionally absent: nothing under src/ imports it. It arrives
+    # anyway as a transitive dependency of persim / scikit-learn. See the scope
+    # caveat at the end of experiments/requirements.txt: one file OUTSIDE src/
+    # (paper/figures/fig4_projection_scales.py) does import scipy.ndimage and
+    # currently relies on that transitive edge.
+    "numpy>=2.0,<3",
+    "matplotlib>=3.7,<4",
+    "PyWavelets>=1.4,<2",
+    "gudhi>=3.12,<3.14",
+    "persim>=0.3.5,<0.4",
+    "pandas>=2.0,<4",
+]
+
+[project.optional-dependencies]
+# This extra is a SUPERSET of experiments/requirements-dev.txt, not a mirror of
+# it. The first three entries are the ones requirements-dev.txt also pins,
+# because they are what the test suite actually needs:
+#   pytest-cov is REQUIRED, not optional: [tool.pytest.ini_options] below passes
+#     --cov unconditionally, so bare `pytest` exits 4 with
+#     "unrecognized arguments: --cov=src/tws_validation --cov-report=term-missing".
+#   PyYAML is required by tools/ci_local.sh, which parses the three workflow
+#     files with `import yaml`.
+# The last three (black / flake8 / mypy) are linters kept out of
+# requirements-dev.txt on purpose. [tool.black] and [tool.mypy] below configure
+# them and docs/CONTRIBUTING.md:32 + docs/SETUP.md:252 tell a developer to run
+# them BY HAND, but no automation invokes them: no Makefile target, no
+# tools/*.sh job, no .pre-commit-config.yaml hook (that file runs only
+# pre-commit-hooks + prettier), no .github/workflows job. So they are opt-in
+# here and absent from requirements-dev.txt, which pins only what running the
+# suite actually requires -- installing three unused linters on every test run
+# would contradict the "declare only what the code uses" rule that governs
+# requirements.txt.
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "PyYAML>=6.0",
+    "black>=24.0",
+    "flake8>=7.0",
+    "mypy>=1.8",
+]
+docs = [
+    "sphinx>=4.5.0",
+    "sphinx-rtd-theme>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/USERNAME/tws-persistence-stability"
+Documentation = "https://github.com/USERNAME/tws-persistence-stability/tree/main/docs"
+Repository = "https://github.com/USERNAME/tws-persistence-stability"
+Issues = "https://github.com/USERNAME/tws-persistence-stability/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --cov=src/tws_validation --cov-report=term-missing"
+
+[tool.black]
+line-length = 88
+target-version = ['py311', 'py312', 'py313']
+include = '\.pyi?$'
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["gudhi", "pywt"]
+ignore_missing_imports = true
