@@ -33,7 +33,13 @@ def fmt_tex_sci(x: float) -> str:
     return f"{mant}\\times 10^{{{int(exp)}}}"
 
 
-def write_caption(summary: dict, inv: dict, max_row: pd.Series) -> str:
+def caption_text(summary: dict, inv: dict, max_row: pd.Series) -> str:
+    """LaTeX caption source. Pure: renders the text, writes nothing.
+
+    Split out of ``write_caption`` so read-only callers
+    (``qa/check_caption.py``) can compare against the committed caption instead
+    of silently rewriting it before comparing.
+    """
     rg, rn, rp = summary["rho"]["global"], summary["rho"]["NORMAL"], summary["rho"]["PNEUMONIA"]
     rop, rtop = summary["rho_op"]["global"], summary["rho_top"]["global"]
     syn = summary["synthetic"]
@@ -42,7 +48,7 @@ def write_caption(summary: dict, inv: dict, max_row: pd.Series) -> str:
     n_img = 40
     b05 = summary["bound_at_eps_0_05"]
     img_tex = str(max_row["image_id"]).replace("_", r"\_")
-    text = f"""% Auto-generated from medical_summary.json + invocation.json. Do not edit numbers by hand.
+    return f"""% Auto-generated from medical_summary.json + invocation.json. Do not edit numbers by hand.
 \\caption{{Theorem~A on {n} comparisons of {n_img} chest radiographs
 (20 NORMAL $+$ 20 PNEUMONIA; seed {inv['seed']}; $256\\times 256$;
 periodized $A_1$; GUDHI \\texttt{{CubicalComplex}}, 4-connectivity;
@@ -64,6 +70,10 @@ The elevated $\\rho_{{\\mathrm{{op}}}}$ is driven by the regularity of the pertu
 (sensor-like white noise versus the smooth synthetic bump noise), not by pathology.
 No class-wise significance is claimed ($n=20$ per class).}}
 """
+
+
+def write_caption(summary: dict, inv: dict, max_row: pd.Series) -> str:
+    text = caption_text(summary, inv, max_row)
     CAPTION_TEX.parent.mkdir(parents=True, exist_ok=True)
     CAPTION_TEX.write_text(text)
     return text

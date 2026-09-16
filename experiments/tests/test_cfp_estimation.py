@@ -39,8 +39,10 @@ PAPER_MAX_EMPIRICAL_RATIO = 1.2480468750000002
 OP_NORM_2D_J0 = 81.0 / 64.0
 
 EXPECTED_CFP_COLUMNS = [
+    "grid_shape",
     "j",
     "boundary",
+    "constant_type",
     "n_inputs",
     "max_ratio",
     "q95_ratio",

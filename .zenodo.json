@@ -1,0 +1,36 @@
+{
+  "title": "Companion code for explicit L-infinity stability bounds of undecimated Daubechies smoothers",
+  "upload_type": "software",
+  "description": "<p>Numerical and Lean 4 artefacts that reproduce the claims of the companion short note <em>Explicit L-infinity stability bounds for undecimated Daubechies smoothing and wavelet-filtered persistence landscapes</em> (Lincovil Curivil, Reinoso Reinoso, Pacheco-Barrios).</p><p><strong>This record is not the paper.</strong> It contains no LaTeX manuscript and no PDF. Cite the note itself; use this record to regenerate the numbers, the Lean certificate, and the frozen medical table and figure.</p><p>Contents: the Python validation package that produces every number quoted in the note and its frozen CSV outputs; the Lean 4.33.0 development (the Theorem A composition skeleton plus the db2 quadrature-mirror-filter certificate); an autonomous medical kit that rebuilds the 3-panel figure from frozen CSV/JSON only; and the SHA256SUMS manifest.</p><p>The chest radiographs used for the medical illustration are <strong>not</strong> redistributed. The repository carries only the deterministic filename manifest and the scripts needed to process images obtained independently from the original public source (Kermany et al., Cell 172(5):1122-1131, 2018), subject to its access and licensing conditions. The medical results included here are the frozen CSV/JSON outputs used for the note.</p><p>Licensed MIT. The medical illustration is an artificial bounded-perturbation illustration, not a clinical validation.</p>",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Lincovil Curivil, Jaime Enrique",
+      "affiliation": "Universidad Nacional de Ingeniería, Lima, Perú",
+      "orcid": "0000-0003-4633-4033"
+    },
+    {
+      "name": "Reinoso Reinoso, César Daniel",
+      "affiliation": "Escuela Superior Politécnica de Chimborazo (ESPOCH), Riobamba, Ecuador",
+      "orcid": "0000-0002-1233-517X"
+    },
+    {
+      "name": "Pacheco-Barrios, Niels",
+      "affiliation": "Universidad Científica del Sur, Lima, Perú; Harvard Medical School, Boston, MA, USA",
+      "orcid": "0000-0001-5586-8251"
+    }
+  ],
+  "keywords": [
+    "persistence landscapes",
+    "stability bounds",
+    "wavelet frames",
+    "undecimated wavelet transform",
+    "topological data analysis",
+    "formal verification",
+    "Lean 4"
+  ],
+  "version": "1.0.0",
+  "language": "eng",
+  "access_right": "open",
+  "notes": "Companion-code record for the arXiv preprint placeholder arXiv:XXXX.XXXXX (replace with the real identifier when the preprint is posted; the placeholder is deliberate and no identifier has been invented). Lean toolchain 4.33.0; mathlib pinned to db584cd6d46c92f209a44c0f1c829460d327499d. See SHA256SUMS for the frozen-artefact manifest. Reproducibility is at value level: floating-point last digits may differ across NumPy/PyWavelets builds; see README."
+}

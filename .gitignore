@@ -32,3 +32,7 @@ chest_xray/**/*.jpg
 *.synctex.gz
 main.tex
 paper.pdf
+
+# Smoke / development outputs (regenerable; never part of the frozen evidence)
+**/*_smoke.csv
+**/*_smoke.png

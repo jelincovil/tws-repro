@@ -53,8 +53,9 @@ Anchors: 200 rows, all `holds`; max \(\rho = 0.38221852267456186\) at
 ```bash
 cd experiments
 python -m pip install -r requirements.txt
-PYTHONPATH=src python -m pytest tests/ -q
-# optional, ~1 h, overwrites committed CSVs:
+python -m pip install -r requirements-dev.txt   # pytest + pytest-cov (pyproject enables --cov)
+PYTHONPATH=src python -m pytest tests/ -q        # 203 passed, 3 xfailed
+# optional, ~2.5 min, overwrites the committed CSVs:
 # PYTHONPATH=src python -m tws_validation.run_all
 ```
 
@@ -107,6 +108,39 @@ and wavelet-filtered persistence landscapes. arXiv:XXXX.XXXXX.
 ```
 
 `CITATION.cff` carries the same placeholder under `preferred-citation`.
+
+---
+
+## Reproducibility level, and two known gaps
+
+Reproduction here is **value-level, not byte-level**. Re-running the synthetic
+suite on a different NumPy/PyWavelets build reproduces every number quoted in
+the note to ~15 significant digits but moves the last float digit (measured
+maximum absolute difference: `2.2e-16` on `cfp_estimates.csv`, `8.6e-14` on
+`thm_a_trials.csv`). Do not expect `git diff` to be empty after a re-run, and
+do not treat that as a failure.
+
+Timings measured on Python 3.12.12 (macOS): `cfp_estimation` 2m24s,
+`persistence_bounds` 5.6s, `sign_pattern_extremal` and `extremal_tightness`
+under 0.3s each. The canonical pipeline is **~2.5 minutes**, not the hour that
+older drafts claimed.
+
+Two artefacts are frozen but not regenerable by any committed command:
+
+- `experiments/results/csv/sign_pattern_extremal.csv` is a **five-row summary**
+  (j=0 n=48 ε=0.05; j=1,2,3 n=128 ε=0.03; j=4 n=256 ε=0.02) that documents the
+  note's "remains at 1 through j=4" claim. The CLI emits a single richer
+  one-row record instead, and the per-grid anchor points used for rows j=1..4
+  are not recorded anywhere. Only the j=0 row (n=48, default anchors) is
+  reproducible as committed. The underlying quantity is robust — every anchor
+  pair tried returns `rho_op = 0.99999…` — but the exact five-row table is not.
+  **`run_all` would overwrite this file with the one-row form**, so do not run
+  it over the frozen evidence.
+- The medical figure is rebuilt from the frozen CSV (numbers asserted against
+  hardcoded anchors, zero text overlaps enforced), but its PDF bytes change on
+  every run because matplotlib embeds a creation timestamp. The frozen table
+  `medical/tables/medical_rho_by_epsilon.tex` and
+  `medical/results/global_results.json` **are** byte-reproducible.
 
 ---
 

@@ -1,25 +1,34 @@
 #!/usr/bin/env python3
-"""Every numeric token in medical_caption.tex must come from JSON/CSV."""
+"""Every numeric token in medical_caption.tex must come from JSON/CSV.
+
+Read-only. This used to call ``write_caption``, which rewrote the caption
+before reading it back, so the comparison was a tautology and a plain "check"
+silently mutated a tracked artefact. It now renders with the pure
+``caption_text`` and compares that against the file on disk.
+"""
 from __future__ import annotations
 
-import json
 import re
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
-from render_final_figure import fmt_tex_sci, load, write_caption  # noqa: E402
+from render_final_figure import caption_text, fmt_tex_sci, load  # noqa: E402
+
+CAPTION_TEX = HERE / "figures" / "medical_caption.tex"
 
 
 def main() -> None:
     df, summary, inv = load()
-    imax = df["rho"].idxmax()
-    max_row = df.loc[imax]
-    expected = write_caption(summary, inv, max_row)
-    on_disk = (HERE / "figures" / "medical_caption.tex").read_text()
+    max_row = df.loc[df["rho"].idxmax()]
+
+    expected = caption_text(summary, inv, max_row)
+    on_disk = CAPTION_TEX.read_text()
     if on_disk != expected:
-        raise SystemExit("caption on disk != regenerated from JSON")
+        raise SystemExit(
+            "caption on disk != regenerated from JSON; re-run render_final_figure.py"
+        )
 
     must = [
         str(summary["n"]),
