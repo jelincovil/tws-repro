@@ -6,15 +6,27 @@ import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic
 
 /-!
-# Exact `ℓ¹` norm of the undecimated db2 approximation kernel
+# Exact `ℓ¹` data for the undecimated db2 approximation kernel
 
-Certificate for the paper's Proposition: the one-dimensional level-1
-undecimated D4 / db2 kernel is `½ R_h = [-1,0,9,16,9,0,-1]/32`, with
-`ℓ¹` norm `9/8`, and the separable two-dimensional row-sum norm is
-`(9/8)^2`. The QMF identities for the orthonormal db2 low-pass filter
-are closed below.
+This file certifies the paper's finite tap computation: the one-dimensional
+level-1 undecimated D4 / db2 kernel is `½ R_h = [-1,0,9,16,9,0,-1]/32`,
+with `ℓ¹` norm `9/8`; the separable two-dimensional absolute-product sum is
+`(9/8)^2`; and the QMF/autocorrelation identities of the orthonormal db2
+low-pass filter are closed.
 
-This does not formalize bottleneck stability or landscapes.
+**Scope of `db2_level1_opnorm_d2`.**  The Lean statement of that theorem is
+
+`∑ i, ∑ j, |k i * k j| = (9/8)^2`.
+
+It proves the absolute-product (row-sum) computation and its algebraic
+separation.  It does **not** construct a periodic convolution operator,
+prove the operator norm of such a convolution on a periodic grid, or
+tensorize the result in a general dimension `d`.  Those bridges are
+mathematical arguments external to this file; the Lean name
+`db2_level1_opnorm_d2` is retained for compatibility with older listings.
+
+This file does not formalize persistent homology, bottleneck stability, or
+persistence landscapes.
 -/
 
 namespace TWS
@@ -34,11 +46,13 @@ def kernel1d : Fin 7 → ℚ
   | ⟨5, _⟩ => 0
   | ⟨6, _⟩ => -1 / 32
 
+/-- The rational taps have `ℓ¹` norm `9/8`. -/
 theorem kernel1d_l1 :
     ∑ i : Fin 7, |kernel1d i| = (9 : ℚ) / 8 := by
   simp [kernel1d, Fin.sum_univ_succ]
   norm_num
 
+/-- The same `ℓ¹` computation after casting the taps to `ℝ`. -/
 theorem kernel1d_l1_real :
     ∑ i : Fin 7, |(kernel1d i : ℝ)| = (9 : ℝ) / 8 := by
   trans ((∑ i : Fin 7, |kernel1d i| : ℚ) : ℝ)
@@ -47,6 +61,9 @@ theorem kernel1d_l1_real :
 
 /-! ## Tensorization of row-sum (`ℓ¹`) norms -/
 
+/-- Algebraic tensorization of a row-sum (`ℓ¹`) norm: the absolute-product
+sum of the outer product `v i * v j` factors as `(∑ |v i|)^2`.  This is an
+identity about finite sums, not a statement about a convolution operator. -/
 theorem outer_l1 {n : ℕ} (v : Fin n → ℝ) :
     ∑ i : Fin n, ∑ j : Fin n, |v i * v j| = (∑ i : Fin n, |v i|) ^ 2 := by
   simp_rw [abs_mul]
@@ -58,11 +75,17 @@ theorem outer_l1 {n : ℕ} (v : Fin n → ℝ) :
           simp [sum_mul]
     _ = (∑ i : Fin n, |v i|) ^ 2 := by ring
 
+/-- **Absolute-product sum for the level-1 two-dimensional `db2` kernel.**
+
+The statement is `∑ᵢ ∑ⱼ |kᵢ kⱼ| = (9/8)^2`.  It does not construct the
+periodic convolution operator or prove its norm; see the module docstring
+for the exact scope. -/
 theorem db2_level1_opnorm_d2 :
     ∑ i : Fin 7, ∑ j : Fin 7, |((kernel1d i : ℝ) * (kernel1d j : ℝ))| =
       ((9 : ℝ) / 8) ^ 2 := by
   rw [outer_l1 (fun i : Fin 7 => (kernel1d i : ℝ)), kernel1d_l1_real]
 
+/-- Arithmetic form of the constant: `(9/8)^2 = 81/64`. -/
 theorem db2_level1_opnorm_d2_num :
     ((9 : ℝ) / 8) ^ 2 = 81 / 64 := by
   norm_num
@@ -92,12 +115,14 @@ lemma h1 : h 1 = c * (3 + sqrt 3) := by simp [h]
 lemma h2 : h 2 = c * (3 - sqrt 3) := by simp [h]
 lemma h3 : h 3 = c * (1 - sqrt 3) := by simp [h]
 
+/-- Autocorrelation at lag `3`: `h 0 * h 3 = -1/16`. -/
 lemma R3 : h 0 * h 3 = (-1 : ℝ) / 16 := by
   rw [h0, h3]
   have : c * (1 + sqrt 3) * (c * (1 - sqrt 3)) = c ^ 2 * (1 - (sqrt 3) ^ 2) := by ring
   rw [this, c_sq, sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
   norm_num
 
+/-- Autocorrelation at lag `2` vanishes. -/
 lemma R2 : h 0 * h 2 + h 1 * h 3 = 0 := by
   rw [h0, h1, h2, h3]
   have : (1 + sqrt 3) * (3 - sqrt 3) + (3 + sqrt 3) * (1 - sqrt 3) = 0 := by
@@ -111,6 +136,7 @@ lemma R2 : h 0 * h 2 + h 1 * h 3 = 0 := by
   rw [hfac, this]
   ring
 
+/-- Autocorrelation at lag `1`: `h 0 * h 1 + h 1 * h 2 + h 2 * h 3 = 9/16`. -/
 lemma R1 : h 0 * h 1 + h 1 * h 2 + h 2 * h 3 = (9 : ℝ) / 16 := by
   rw [h0, h1, h2, h3]
   have h18 :
@@ -133,6 +159,7 @@ lemma R1 : h 0 * h 1 + h 1 * h 2 + h 2 * h 3 = (9 : ℝ) / 16 := by
     _ = (1 / 32) * 18 := by rw [c_sq]
     _ = 9 / 16 := by norm_num
 
+/-- Autocorrelation at lag `0` (the QMF energy identity): `∑ h n ^ 2 = 1`. -/
 lemma R0 : h 0 ^ 2 + h 1 ^ 2 + h 2 ^ 2 + h 3 ^ 2 = 1 := by
   rw [h0, h1, h2, h3]
   have h32 :
@@ -157,28 +184,33 @@ lemma R0 : h 0 ^ 2 + h 1 ^ 2 + h 2 ^ 2 + h 3 ^ 2 = 1 := by
 noncomputable def autocorr (k : ℕ) : ℝ :=
   ∑ n ∈ range 4, h n * h (n + k)
 
+/-- `autocorr 0 = 1`. -/
 theorem autocorr_zero : autocorr 0 = 1 := by
   unfold autocorr
   simp [sum_range_succ]
   simpa [pow_two] using R0
 
+/-- `autocorr 1 = 9/16`. -/
 theorem autocorr_one : autocorr 1 = (9 : ℝ) / 16 := by
   unfold autocorr
   simp [sum_range_succ, h]
   -- n+1 for n=3 is h 4 = 0
   simpa [h] using R1
 
+/-- `autocorr 2 = 0`. -/
 theorem autocorr_two : autocorr 2 = 0 := by
   unfold autocorr
   simp [sum_range_succ, h]
   simpa [h] using R2
 
+/-- `autocorr 3 = -1/16`. -/
 theorem autocorr_three : autocorr 3 = (-1 : ℝ) / 16 := by
   unfold autocorr
   simp [sum_range_succ, h]
   simpa [h] using R3
 
-/-- Half-autocorrelation `ℓ¹` (even kernel) equals `9/8`. -/
+/-- The half-autocorrelation kernel (the seven taps above, read as an even
+kernel) has `ℓ¹` norm `9/8`. -/
 theorem half_autocorr_l1 :
     |autocorr 3 / 2| + |autocorr 2 / 2| + |autocorr 1 / 2| + |autocorr 0 / 2| +
       |autocorr 1 / 2| + |autocorr 2 / 2| + |autocorr 3 / 2| = (9 : ℝ) / 8 := by

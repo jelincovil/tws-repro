@@ -25,40 +25,31 @@ import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 import Mathlib.Data.Int.Interval
 
 /-!
-# TWS Stability Formalization — Skeleton v2
+# HISTORICAL — Skeleton v2 (archived, not part of the library)
 
-Lean 4 / mathlib4 development skeleton for the localized persistence
-landscape stability theorem under redundant wavelet frame projections.
+This file is preserved only for provenance.  It is **not** imported by
+`TWS.lean`, is not built by the `TWS` Lake target, and must not be cited as
+a formalization of a theorem of the paper.
 
-This v2 resolves the five most critical `sorry` markers identified in the
-companion paper's Phase-0 audit (with concrete tactics or justified
-proof sketches), adds docstrings to every exported declaration, completes
-the main-theorem conclusion as an explicit inequality, and ends with a
-`#print axioms` audit.
+Why it was withdrawn from the main interface:
 
-The five critical obligations resolved here:
-  1. `localEnergy_nonneg`   — full tactic proof (Finset.sum_nonneg).
-  2. `stability_two_term` C2 positivity — full tactic proof (mul_pos).
-  3. `stability_two_term` main calc chain — completed from the two
-     supplied local hypotheses.
-  4. `l2_norm_rev_tri`      — closed: `Lp.norm_toLp` plus
-     `abs_norm_sub_norm_le`. Hypotheses are `MemLp` of the indicated
-     functions (square-integrability on `U`).
-  5. `frame_proj_bound`/`landscape_restrict` — stated as derived, with
-     the reduction made explicit.
+* `projection` is the identity map, not the multiscale frame projection;
+* `projDgmK` returns the empty multiset, not a projected persistence
+  diagram;
+* `landscape` ignores the landscape index and computes the first pointwise
+  maximum of the tents;
+* `landscape_stability_hyp` already contains the localized inequality and
+  the window factor, so the old "Theorem A" only composed hypotheses about
+  placeholder objects (and its conclusion collapsed to `0` when the
+  projected diagram was empty).
 
-There is no `sorry` in this file. Remaining analytic content lives in
-named hypotheses (`landscape_stability_hyp`, `frame_proj_bound_hyp`,
-`scale_energy_bound`) and in placeholder bodies of domain definitions
-that depend on the concrete persistence backend; each is flagged with a
-comment explaining what is required.
+The current, exported formalization lives in `TWS/BoundComposition.lean`
+and `TWS/DaubechiesOpNorm.lean`.  In particular, the genuine composition
+result is `TWS.summary_comp_bound`, not any declaration below.
 
-Companion paper: "Parameter-Localized Persistence Landscape Stability
-under Redundant Wavelet Frame Projections" (CAM / Springer submission).
-
-Module layout (when split):
-  TWS/Preliminaries.lean, TWS/FrameStructure.lean, TWS/BesovEnergy.lean,
-  TWS/AuxiliaryLemmas.lean, TWS/MainTheorem.lean, TWS/Corollaries.lean
+The declarations below are retained as an audit trail.  They still contain
+the placeholder definitions listed above.  Do not present them as
+homology, bottleneck stability, or landscape-stability results.
 -/
 
 namespace TWS
@@ -495,29 +486,14 @@ end
 end TWS
 
 /-
-  AXIOM AUDIT
-  ===========
-  Run after `lake build`:
-
-    #print axioms TWS.stability_Linf
-    #print axioms TWS.stability_two_term
-    #print axioms TWS.localEnergy_nonneg
-    #print axioms TWS.energy_stability
-
-  EXPECTED OUTPUT for every exported result, including
-  `l2_norm_rev_tri` and `local_index_card_exponent_is_dim`:
-
-    'TWS.stability_Linf' depends on axioms: [propext, Classical.choice, Quot.sound]
-
-  i.e. only the three standard mathlib4 axioms. NOTE that
-  `stability_two_term` and `stability_Linf` are stated relative to the
-  local hypotheses (`landscape_stability_hyp`, `frame_proj_bound_hyp`,
-  `scale_energy_bound`) supplied as arguments — they are theorems ABOUT
-  those hypotheses, so the axiom audit is clean even though
-  `scale_energy_bound` is not yet derived from (A1)–(A4).
-
-  There is no `sorry` in this file. `#print axioms TWS.l2_norm_rev_tri`
-  must not mention `sorryAx`. The standalone `energy_stability` takes
-  `|a-b|≤Γ` as a hypothesis; its intended application instantiates `Γ`
-  from `l2_norm_rev_tri`, which is now closed.
+  HISTORICAL AUDIT NOTE
+  =====================
+  This archived file is outside the `TWS` library target.  The old
+  `stability_Linf` and `stability_two_term` declarations above quantify
+  over placeholder objects (`projection = id`, `projDgmK = ∅`, a
+  first-landscape-only `landscape`).  A clean axiom output for them would
+  only say that the conditional composition of those hypotheses is
+  proof-term clean; it would NOT certify a theorem about persistence
+  landscapes.  The current audit is `formalization/scripts/print_axioms.lean`
+  and covers `TWS/BoundComposition.lean` plus `TWS/DaubechiesOpNorm.lean`.
 -/

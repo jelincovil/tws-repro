@@ -6,9 +6,9 @@ Scripts auxiliares para la formalización en Lean 4.
 
 | Fichero | Qué hace |
 |---------|----------|
-| `check_all.sh` | `lake exe cache get` + `lake build` + auditoría de `sorry`. Sale con el código de `lake build`. |
-| `print_axioms.sh` | Envoltorio de la auditoría de axiomas. Con argumento, además archiva la salida en ese fichero. |
-| `print_axioms.lean` | Fichero Lean con los `#print axioms` de las cinco declaraciones exportadas. |
+| `check_all.sh` | `lake exe cache get` + `lake build` + auditoría de `sorry`, `admit` y declaraciones `axiom` explícitas en las fuentes de la librería. |
+| `print_axioms.sh` | Envoltorio de la auditoría de axiomas. Comprueba que no aparezca ningún axioma fuera de `propext`, `Classical.choice`, `Quot.sound`. Con argumento, archiva la salida. |
+| `print_axioms.lean` | Fichero Lean con los `#print axioms` de las declaraciones exportadas de `BoundComposition` y `DaubechiesOpNorm`. |
 
 ## Uso
 
@@ -26,7 +26,7 @@ lake env lean scripts/print_axioms.lean
 ```
 
 `lake env lean --run scripts/print_axioms.lean` es incorrecto: `--run` espera
-un `def main` ejecutable y aquí falla. Ese error estuvo en `lean_check.yml`.
+un `def main` ejecutable y aquí falla.
 
 ## Salida esperada
 
@@ -34,21 +34,29 @@ un `def main` ejecutable y aquí falla. Ese error estuvo en `lean_check.yml`.
 
 ```
 real sorry count: 0
+real admit count: 0
+explicit axiom declarations: 0
 RESULT: BUILD OK
 ```
 
-`real sorry count` distinto de 0 es una regresión. El filtro descarta la prosa
-de los docstrings: ocurrencias entre acentos graves (`` `sorry` ``, `` `sorryAx` ``),
-identificadores que lo contienen (`sorryAx`) y guionizados (`sorry-free`).
+Cualquier recuento distinto de 0 es una regresión. El filtro descarta la
+prosa de los docstrings: ocurrencias entre acentos graves (`` `sorry` ``,
+`` `sorryAx` ``), identificadores que lo contienen (`sorryAx`) y guionizados
+(`sorry-free`). El directorio `archive/` queda fuera de la auditoría porque
+no pertenece al target `TWS`.
 
 `print_axioms.sh` debe reproducir exactamente el bloque literal archivado en
-`docs/axioms_audit.txt`.
+`docs/axioms_audit.txt` y termina con
+
+```
+axiom audit: only [propext, Classical.choice, Quot.sound] (or subsets).
+```
 
 ## Referencia
 
 - Comando principal: `lake build` (desde `formalization/`)
-- Código fuente: `TWS/Skeleton.lean`
+- Código fuente: `TWS/BoundComposition.lean`, `TWS/DaubechiesOpNorm.lean`
+- Esqueleto histórico: `archive/Skeleton_v2_historical.lean`
 - Auditoría archivada: `../docs/axioms_audit.txt`
-- Makefile: `make lean` desde `tws-persistence-stability/` hace
-  `cd formalization && lake build`; en Windows falla por `MAX_PATH`, hay que
-  usar la copia de ruta corta.
+- Makefile: `make lean` desde la raíz hace `cd formalization && lake build`;
+  en Windows falla por `MAX_PATH`, hay que usar la copia de ruta corta.

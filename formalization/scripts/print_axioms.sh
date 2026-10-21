@@ -8,8 +8,9 @@
 #
 # Requires a successful `lake build` first (the script runs it for you).
 #
-# A clean audit is exactly:  [propext, Classical.choice, Quot.sound]
-# Any `sorryAx` in the output means the theorem is NOT proved.
+# A clean audit is a subset of the standard mathlib axioms
+# `propext`, `Classical.choice`, `Quot.sound`.  Any `sorryAx` or any
+# additional axiom name is a failure.
 
 set -uo pipefail
 
@@ -49,8 +50,32 @@ if [ -n "${OUT}" ]; then
 fi
 
 echo
-if printf '%s\n' "${AUDIT}" | grep -q 'sorryAx'; then
-  echo "ERROR: axiom audit reports sorryAx (incomplete proof)." >&2
+# Extract the bracketed list after `depends on axioms:` and reject every
+# name outside the three standard mathlib axioms.  This catches `sorryAx`
+# and any locally declared axiom, not just `sorryAx`.
+BAD_AXIOMS="$(printf '%s\n' "${AUDIT}" | awk '
+  /depends on axioms:/ {
+    line = $0
+    sub(/^.*\[/, "", line)
+    sub(/\].*$/, "", line)
+    n = split(line, parts, ", ")
+    for (i = 1; i <= n; i++) {
+      if (parts[i] != "propext" &&
+          parts[i] != "Classical.choice" &&
+          parts[i] != "Quot.sound") {
+        print parts[i]
+      }
+    }
+  }' | sort -u)"
+
+if [ -n "${BAD_AXIOMS}" ]; then
+  echo "ERROR: axiom audit found unexpected axiom(s):" >&2
+  printf '%s\n' "${BAD_AXIOMS}" >&2
   exit 1
 fi
-exit "${STATUS}"
+if [ "${STATUS}" -ne 0 ]; then
+  echo "ERROR: axiom audit elaboration failed (exit ${STATUS})." >&2
+  exit "${STATUS}"
+fi
+echo "axiom audit: only [propext, Classical.choice, Quot.sound] (or subsets)."
+exit 0

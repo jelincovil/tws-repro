@@ -21,7 +21,7 @@ Software: MIT. Radiograph JPEGs are **not** redistributed.
 |--|--|--|
 | 1280 synthetic Theorem A checks, \(\rho\le 1\) | `experiments/` | no |
 | Sign-pattern \(\rho_{\mathrm{op}}=1\) | `experiments/` | no |
-| db2 first-level norm \((9/8)^d\) in Lean | `formalization/` | no |
+| db2 level-1 absolute-product sum \((9/8)^2\) in Lean (no periodic convolution) | `formalization/` | no |
 | 200/200 medical checks, \(\max\rho=0.38222\) | `medical/` from frozen CSV | no |
 | Re-run medical pipeline on Kermany JPEGs | `experiments/medical_validation/` | local `chest_xray/test/` |
 
@@ -65,11 +65,19 @@ PYTHONPATH=src python -m pytest tests/ -q        # 203 passed, 3 xfailed
 cd formalization
 lake exe cache get
 lake build
-./scripts/print_axioms.sh
+lake env lean scripts/print_axioms.lean
 ```
 
-Axioms of the audited declarations:
-`{propext, Classical.choice, Quot.sound}`. Zero `sorry`.
+The exported Lean result is the abstract composition
+`TWS.summary_comp_bound` (plus its localized-window specialization and a
+concrete non-constant instance) and the finite `db2` computation in
+`TWS.DaubechiesOpNorm`.  Persistent homology, bottleneck stability, frame
+projection bounds and landscape stability are **external mathematical
+inputs**, not formalized.  Axioms of the audited declarations:
+`{propext, Classical.choice, Quot.sound}`. Zero `sorry`.  See
+[`formalization/README.md`](formalization/README.md) for the
+result-to-declaration table and the verification record (2026-10-21:
+`lake build` completed with 3009 jobs; 25 audited declarations clean).
 
 ### D. Optional: recompute medical rows from images
 
@@ -89,7 +97,7 @@ Two full runs must produce a byte-identical `medical_bounds.csv`.
 
 ```
 experiments/       Python validation + committed CSVs
-formalization/     Lean 4 companion (QMF + composition skeleton)
+formalization/     Lean 4 companion (abstract bound composition + db2 certificate)
 medical/           Autonomous kit (CSV/JSON + figure from frozen numbers)
 chest_xray/        README only (how to obtain JPEGs)
 ```

@@ -6,7 +6,7 @@ Documentación auxiliar de la formalización en Lean 4.
 
 | Fichero | Qué es |
 |---------|--------|
-| `axioms_audit.txt` | Salida literal de `#print axioms` sobre las cinco declaraciones exportadas, con toolchain, revisión de mathlib y lectura del resultado. |
+| `axioms_audit.txt` | Salida literal de `#print axioms` sobre las declaraciones exportadas de `TWS/BoundComposition.lean` y `TWS/DaubechiesOpNorm.lean`. |
 
 `axioms_audit.txt` no se edita a mano. Se regenera con
 
@@ -14,25 +14,37 @@ Documentación auxiliar de la formalización en Lean 4.
 ./scripts/print_axioms.sh docs/axioms_audit.txt
 ```
 
-y luego se restituye la prosa de cabecera alrededor del bloque literal. El
-bloque debe coincidir carácter a carácter con lo que imprime
+El fichero debe coincidir carácter a carácter con lo que imprime
 
 ```bash
 lake env lean scripts/print_axioms.lean
 ```
 
-Verificado por última vez el 2026-09-10: el bloque literal coincide con
-`./scripts/print_axioms.sh`; `sorry` count 0; ningún `sorryAx`.
+La auditoría comprueba que cada teorema depende únicamente de
+`propext`, `Classical.choice` y `Quot.sound` (o de un subconjunto de esos
+tres). Cualquier nombre adicional —en particular `sorryAx`— hace fallar
+`print_axioms.sh`. El esqueleto histórico en `archive/` no forma parte del
+target `TWS` y no se audita.
 
-## Documentación que podría ir aquí
+Última verificación: 2026-10-21. El bloque literal fue regenerado con
+`./scripts/print_axioms.sh docs/axioms_audit.txt`; las 25 declaraciones
+auditadas solo dependen de los tres axiomas estándar.
 
-- Diagrama de dependencias entre hipótesis y teoremas
-- Mapeo paper ↔ Lean (qué definición del paper corresponde a qué declaración
-  Lean); hoy ese mapeo vive en la tabla «Key declarations» de
-  `../README.md`
+## Mapa paper ↔ Lean
+
+La tabla «Resultado matemático → declaración Lean → hipótesis recibidas →
+contenido demostrado → contenido no formalizado» vive en
+`../README.md`.  Resume:
+
+- composición abstracta y su especialización localizada: formalizadas;
+- identidades del filtro `db2`: formalizadas como álgebra finita;
+- estabilidad de bottleneck, paisajes, proyección de marco y energía de
+  Besov: argumentos matemáticos externos, no formalizados;
+- experimentos numéricos: no formalizados.
 
 ## Referencia
 
 - Overview y cómo ejecutar: `../README.md`
-- Código fuente con docstrings: `../TWS/Skeleton.lean`
-- Guía de instalación: `../../docs/SETUP.md`
+- Código fuente: `../TWS/BoundComposition.lean`, `../TWS/DaubechiesOpNorm.lean`
+- Esqueleto histórico: `../archive/Skeleton_v2_historical.lean`
+- Auditoría archivada: `axioms_audit.txt`

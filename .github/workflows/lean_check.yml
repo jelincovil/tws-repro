@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   verify:
-    name: lake build + axiom audit
+    name: lake build + source/axiom audit
     runs-on: ubuntu-latest
     timeout-minutes: 90
     defaults:
@@ -46,16 +46,17 @@ jobs:
           path: formalization/.lake
           key: ${{ runner.os }}-lake-${{ hashFiles('formalization/lean-toolchain', 'formalization/lakefile.toml', 'formalization/lake-manifest.json') }}
           restore-keys: ${{ runner.os }}-lake-
-      - name: mathlib cache
-        run: lake exe cache get || echo "::warning::mathlib cache unavailable"
-      - name: Build
-        run: lake build
+      - name: Pin check
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- lean-toolchain lake-manifest.json
+      - name: Build and source audit
+        run: |
+          set -euo pipefail
+          chmod +x scripts/check_all.sh
+          ./scripts/check_all.sh
       - name: Axiom audit
         run: |
           set -euo pipefail
           chmod +x scripts/print_axioms.sh
           ./scripts/print_axioms.sh axioms.txt
-          if grep -q 'sorryAx' axioms.txt; then
-            echo "::error::sorryAx present"
-            exit 1
-          fi
