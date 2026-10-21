@@ -41,7 +41,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install "pytest>=8.0"
+          pip install "pytest>=8.0" "pytest-cov>=5.0"
       - name: Tests
         env:
           PYTHONPATH: src
@@ -63,8 +63,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Verify frozen CSV/JSON
-        run: python verify_results.py
-      - name: Checksums
+      # verify_results.py rewrites global_results.json and the LaTeX table;
+      # validate the frozen bytes before that regeneration, then keep the
+      # verifier's numeric assertions as the post-regeneration check.
+      - name: Checksums (before regeneration)
         working-directory: .
         run: shasum -a 256 -c SHA256SUMS
+      - name: Verify frozen CSV/JSON
+        run: python verify_results.py
